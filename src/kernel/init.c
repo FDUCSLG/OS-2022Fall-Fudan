@@ -1,4 +1,5 @@
 #include <kernel/init.h>
+#include <kernel/printk.h>
 
 extern char early_init[], rest_init[], init[], einit[];
 

@@ -5,7 +5,7 @@
 #include <driver/uart.h>
 #include <kernel/init.h>
 
-static void init_uart() {
+define_early_init(uart) {
     device_put_u32(GPPUD, 0);
     delay_us(5);
     device_put_u32(GPPUDCLK0, (1 << 14) | (1 << 15));
@@ -31,7 +31,6 @@ static void init_uart() {
 
     // set_interrupt_handler(IRQ_AUX, uart_intr);
 }
-early_init_func(init_uart)
 
 char uart_get_char() {
     u32 state = device_get_u32(AUX_MU_IIR_REG);
