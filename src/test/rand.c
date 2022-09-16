@@ -1,6 +1,7 @@
-#include <kernel/cpu.h>
+#include <aarch64/intrinsic.h>
+#include <common/defines.h>
 
-static u64 next[NCPU] = {1111, 2222, 3333, 4444};
+static u64 next[4] = {1111, 2222, 3333, 4444};
 
 unsigned rand(void) {
   // RAND_MAX assumed to be 32767
