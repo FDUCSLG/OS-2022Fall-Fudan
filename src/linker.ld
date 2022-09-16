@@ -6,13 +6,14 @@ SECTIONS
         *(.text)
     }
     PROVIDE(etext = .);
+    . = ALIGN(8);
     .init : { 
         PROVIDE(early_init = .);
-        *(.init.early)
+        KEEP(*(.init.early))
         PROVIDE(rest_init = .);
-        *(.init.rest)
+        KEEP(*(.init.rest))
         PROVIDE(init = .);
-        *(.init)
+        KEEP(*(.init))
         PROVIDE(einit = .);
     }
     .rodata : { *(.rodata) }

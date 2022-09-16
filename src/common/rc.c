@@ -1,6 +1,6 @@
 #include <common/rc.h>
 
-void _init_rc(RefCount *rc) {
+void init_rc(RefCount *rc) {
     rc->count = 0;
 }
 

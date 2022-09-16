@@ -4,7 +4,10 @@
 #define false 0
 #define TRUE true
 #define FALSE false
+#ifndef NULL
 #define NULL 0
+#endif
+#define auto __auto_type
 
 typedef char bool;
 typedef signed char i8;
@@ -41,6 +44,7 @@ typedef u64 usize;
 #define INLINE        inline __attribute__((unused))
 #define ALWAYS_INLINE inline __attribute__((unused, always_inline))
 #define NO_INLINE     __attribute__((noinline))
+#define NO_IPA        __attribute__((noipa))
 
 // NOTE: no_return will disable traps.
 // NO_RETURN NO_INLINE void no_return();
@@ -76,3 +80,9 @@ static INLINE u64 round_down(u64 a, u64 b) {
 static INLINE u64 round_up(u64 a, u64 b) {
     return round_down(a + b - 1, b);
 }
+
+// panic
+void _panic(const char*, int);
+NO_INLINE NO_RETURN void _panic(const char*, int);
+#define PANIC() _panic(__FILE__, __LINE__)
+#define ASSERT(expr) ({ if (!(expr)) PANIC(); })

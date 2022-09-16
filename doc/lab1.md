@@ -27,6 +27,8 @@ git clone https://github.com/FDUCSLG/OS-2022Fall-Fudan.git
 cd OS-2022Fall-Fudan
 # 切换到本实验分支
 git checkout lab1
+# 新建一个dev分支
+git checkout -b lab1-dev
 # 创建build目录用来进行后续的运行
 mkdir -p build
 cd build
@@ -154,7 +156,7 @@ AArch64中有EL3、EL2、EL1、EL0四个特权级，我们的lab只使用EL1、E
   
   > ~~你甚至可以放一只可爱猫猫~~
 
-报告中不应有大段代码的复制。如有使用本地环境进行使用的同学，请联系助教提交代码。使用服务器进行实验的同学，助教会在服务器上检查，不需要另外提交代码。
+###### 报告中不应有大段代码的复制。如有使用本地环境进行实验的同学，请联系助教提交代码。使用服务器进行实验的同学，助教会在服务器上检查，不需要另外提交代码。
 
 最后
 

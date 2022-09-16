@@ -7,13 +7,11 @@ typedef struct {
     isize count;
 } RefCount;
 
-void _init_rc(RefCount*);
 void _increment_rc(RefCount*);
 bool _decrement_rc(RefCount*);
 
 // initialize reference count to zero.
-#define init_rc(checker, rc) _init_rc(rc)
-
+void init_rc(RefCount*);
 // atomic increment reference count by one.
 #define increment_rc(checker, rc) (checker_begin_ctx(checker), _increment_rc(rc))
 

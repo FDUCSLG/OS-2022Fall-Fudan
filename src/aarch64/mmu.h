@@ -1,7 +1,6 @@
 #pragma once
 
-// #include <common/defines.h>
-typedef unsigned long long u64;
+#include <common/defines.h>
 
 #define PAGE_SIZE 4096
 
