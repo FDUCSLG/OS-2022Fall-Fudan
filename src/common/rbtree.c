@@ -1,4 +1,4 @@
-#include "myrbtree.h"
+#include "rbtree.h"
 #define RB_RED 0
 #define RB_BLACK 1
 #define rb_parent(r) ((rb_node)((r)->__rb_parent_color & ~3))
@@ -238,11 +238,45 @@ static void __rb_erase_fix(rb_node parent, rb_root root) {
         }
     }
 }
-void _rb_insert_fix(rb_node node, rb_root root) { __rb_insert_fix(node, root); }
+int _rb_insert(rb_node node,rb_root rt,bool (*cmp)(rb_node lnode,rb_node rnode)){
+    rb_node nw = rt->rb_node, parent = NULL;
+    node->rb_left=node->rb_right=NULL;
+    while (nw) {
+        parent = nw;
+        if (cmp(node,nw)) {
+            nw = nw->rb_left;
+            if (nw == NULL) {
+                parent->rb_left = node;
+                node->__rb_parent_color = (unsigned long)parent;
+            }
+        } else if (cmp(nw,node)) {
+            nw = nw->rb_right;
+            if (nw == NULL) {
+                parent->rb_right = node;
+                node->__rb_parent_color = (unsigned long)parent;
+            }
+        } else
+            return -1;
+    }
+    __rb_insert_fix(node, rt);
+    return 0;
+}
 void _rb_erase(rb_node node, rb_root root) {
     rb_node rebalance;
     rebalance = __rb_erase(node, root);
     if (rebalance) __rb_erase_fix(rebalance, root);
+}
+rb_node _rb_lookup(rb_node node,rb_root rt,bool (*cmp)(rb_node lnode,rb_node rnode)){
+    rb_node nw = rt->rb_node;
+    while (nw) {
+        if (cmp(node,nw)) {
+            nw = nw->rb_left;
+        } else if (cmp(nw,node)) {
+            nw = nw->rb_right;
+        } else
+            return nw;
+    }
+    return NULL;
 }
 rb_node _rb_first(rb_root root) {
     rb_node n;
