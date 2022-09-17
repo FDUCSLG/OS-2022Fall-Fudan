@@ -31,7 +31,7 @@ void alloc_test() {
     SYNC(1)
     for (int j = 0; j < y; j++) {
         p[i][j] = kalloc_page();
-        if (!p[i][j] || ((u64)p[i][j] & 1023)) FAIL("FAIL: alloc_page() = %p\n", p[i][j]);
+        if (!p[i][j] || ((u64)p[i][j] & 4095)) FAIL("FAIL: alloc_page() = %p\n", p[i][j]);
         memset(p[i][j], i ^ j, PAGE_SIZE);
     }
     for (int j = 0; j < y; j++) {
