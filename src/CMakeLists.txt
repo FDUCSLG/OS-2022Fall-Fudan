@@ -13,7 +13,7 @@ set(compiler_warnings "-Werror -Wall -Wextra")
 set(compiler_flags "${compiler_warnings} \
     -fno-pie -fno-pic -fno-stack-protector \
     -fno-zero-initialized-in-bss \
-    -Og -static -fno-builtin -nostdlib -nostdinc -ffreestanding -nostartfiles \
+    -Og -g -static -fno-builtin -nostdlib -nostdinc -ffreestanding -nostartfiles \
     -Wl,--whole-archive \
     -mgeneral-regs-only \
     -MMD -MP \
