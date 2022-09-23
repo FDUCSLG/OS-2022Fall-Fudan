@@ -4,7 +4,7 @@
 
 #### 关于答疑方式的说明
 
-- 推荐：gitlab issue、github issue
+- 推荐：[gitlab issue](https://gitlab.com/fudan-systa/os2022-fall/-/issues)、[github issue](https://github.com/FDUCSLG/OS-2022Fall-Fudan/issues)
 - elearning？
 - ~~由于资金的原因~~slack可能要功成身退了
 
