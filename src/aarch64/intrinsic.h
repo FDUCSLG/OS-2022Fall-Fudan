@@ -42,19 +42,25 @@ static ALWAYS_INLINE void arch_fence() {
     arch_isb();
 }
 
+/* Data cache clean and invalidate by virtual address to point of coherency. */
+static ALWAYS_INLINE void arch_dccivac(void* p, int n) {
+    while (n--)
+        asm volatile("dc civac, %[x]" : : [x] "r"(p + n));
+}
+
 // for `device_get/put_*`, there's no need to protect them with architectual
 // barriers, since they are intended to access device memory regions. These
 // regions are already marked as nGnRnE in `kernel_pt`.
 
 static ALWAYS_INLINE void device_put_u32(u64 addr, u32 value) {
     compiler_fence();
-    *(volatile u32 *)addr = value;
+    *(volatile u32*)addr = value;
     compiler_fence();
 }
 
 static ALWAYS_INLINE u32 device_get_u32(u64 addr) {
     compiler_fence();
-    u32 value = *(volatile u32 *)addr;
+    u32 value = *(volatile u32*)addr;
     compiler_fence();
     return value;
 }
@@ -85,7 +91,7 @@ static ALWAYS_INLINE u64 arch_get_elr() {
 }
 
 // set vector base (virtual) address register (EL1).
-static ALWAYS_INLINE void arch_set_vbar(void *ptr) {
+static ALWAYS_INLINE void arch_set_vbar(void* ptr) {
     arch_fence();
     asm volatile("msr vbar_el1, %[x]" : : [x] "r"(ptr));
     arch_fence();
@@ -210,12 +216,21 @@ static inline bool _arch_disable_trap() {
     return true;
 }
 
-#define arch_with_trap for (int __t_i = (_arch_enable_trap(), 0); __t_i < 1; __t_i++, _arch_disable_trap())
+#define arch_with_trap \
+    for (int __t_i = (_arch_enable_trap(), 0); __t_i < 1; __t_i++, _arch_disable_trap())
 
 static ALWAYS_INLINE NO_RETURN void arch_stop_cpu() {
-    while (1) arch_wfe();
+    while (1)
+        arch_wfe();
 }
-
+static inline void delay(i32 count) {
+    asm volatile("__delay_%=: subs %[count], %[count], #1; bne __delay_%=\n"
+                 : "=r"(count)
+                 : [count] "0"(count)
+                 : "cc");
+}
 void delay_us(u64 n);
 
-#define set_return_addr(addr) (compiler_fence(), ((volatile u64*)__builtin_frame_address(0))[1] = (u64)(addr), compiler_fence())
+#define set_return_addr(addr) \
+    (compiler_fence(), ((volatile u64*)__builtin_frame_address(0))[1] = (u64)(addr), \
+     compiler_fence())

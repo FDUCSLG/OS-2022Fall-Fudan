@@ -182,3 +182,6 @@ __attribute__((__aligned__(PAGE_SIZE))) PTEntries _kernel_pt_level2 = {
 
 // the first level of kernel PT (page table).
 __attribute__((__aligned__(PAGE_SIZE))) PTEntries kernel_pt = {K2P(_kernel_pt_level2) + PTE_TABLE};
+
+// invalid kernel PT to detect errors like *(int*)NULL
+__attribute__((__aligned__(PAGE_SIZE))) PTEntries invalid_pt = {0};
