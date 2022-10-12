@@ -44,12 +44,20 @@ bool is_zombie(struct proc* p)
     return r;
 }
 
+bool is_unused(struct proc* p)
+{
+    bool r;
+    _acquire_sched_lock();
+    r = p->state == ZOMBIE;
+    _release_sched_lock();
+    return r;
+}
+
 bool activate_proc(struct proc* p)
 {
     // TODO
     // if the proc->state is RUNNING/RUNNABLE, do nothing
     // if the proc->state if SLEEPING/UNUSED, set the process state to RUNNABLE and add it to the sched queue
-    // else: panic
 
 }
 

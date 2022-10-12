@@ -4,6 +4,7 @@
 #include <kernel/printk.h>
 #include <driver/interrupt.h>
 #include <kernel/proc.h>
+#include <kernel/syscall.h>
 
 void trap_global_handler(UserContext* context)
 {
@@ -13,9 +14,7 @@ void trap_global_handler(UserContext* context)
     u64 ec = esr >> ESR_EC_SHIFT;
     u64 iss = esr & ESR_ISS_MASK;
     u64 ir = esr & ESR_IR_MASK;
-
     (void)iss;
-
     arch_reset_esr();
 
     switch (ec)
@@ -23,20 +22,23 @@ void trap_global_handler(UserContext* context)
         case ESR_EC_UNKNOWN:
         {
             if (ir)
+            {
+                printk("Broken pc?\n");
                 PANIC();
+            }
             else
                 interrupt_global_handler();
         } break;
         case ESR_EC_SVC64:
         {
-            PANIC();
+            syscall_entry(context);
         } break;
         case ESR_EC_IABORT_EL0:
         case ESR_EC_IABORT_EL1:
         case ESR_EC_DABORT_EL0:
         case ESR_EC_DABORT_EL1:
         {
-            printk("Page fault\n");
+            printk("Page fault %llu\n", ec);
             PANIC();
         } break;
         default:
@@ -45,6 +47,9 @@ void trap_global_handler(UserContext* context)
             PANIC();
         }
     }
+
+    // TODO: stop killed process while returning to user space
+
 }
 
 NO_RETURN void trap_error_handler(u64 type)

@@ -64,3 +64,7 @@ typedef PTEntry *PTEntriesPtr;
 #define P2N(addr) (addr>>12)
 #define PAGE_BASE(addr) (addr & ~(PAGE_SIZE - 1))
 
+#define VA_PART0(va) (((u64)(va) & 0xFF8000000000) >> 39)
+#define VA_PART1(va) (((u64)(va) & 0x7FC0000000) >> 30)
+#define VA_PART2(va) (((u64)(va) & 0x3FE00000) >> 21)
+#define VA_PART3(va) (((u64)(va) & 0x1FF000) >> 12)

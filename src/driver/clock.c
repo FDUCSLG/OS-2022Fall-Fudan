@@ -22,9 +22,16 @@ void init_clock()
     device_put_u32(CORE_CLOCK_CTRL(cpuid()), CORE_CLOCK_ENABLE);
 }
 
+u64 get_timestamp_ms()
+{
+    return get_timestamp() / clock.one_ms;
+}
+
 void reset_clock(u64 countdown_ms)
 {
-    asm volatile("msr cntp_tval_el0, %[x]" ::[x] "r"(countdown_ms * clock.one_ms));
+    u64 t = countdown_ms * clock.one_ms;
+    ASSERT(t <= 0x7fffffff);
+    asm volatile("msr cntp_tval_el0, %[x]" ::[x] "r"(t));
 }
 
 void set_clock_handler(ClockHandler handler)

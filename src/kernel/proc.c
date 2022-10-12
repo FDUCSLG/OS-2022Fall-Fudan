@@ -25,7 +25,8 @@ NO_RETURN void exit(int code)
     // 1. set the exitcode
     // 2. clean up the resources
     // 3. transfer children to the root_proc, and notify the root_proc if there is zombie
-    // 4. sched(ZOMBIE)
+    // 4. notify the parent
+    // 5. sched(ZOMBIE)
     // NOTE: be careful of concurrency
     
     PANIC(); // prevent the warning of 'no_return function returns'
@@ -38,6 +39,14 @@ int wait(int* exitcode)
     // 2. wait for childexit
     // 3. if any child exits, clean it up and return its pid and exitcode
     // NOTE: be careful of concurrency
+    
+}
+
+int kill(int pid)
+{
+    // TODO
+    // Set the killed flag of the proc to true and return 0.
+    // Return -1 if the pid is invalid (proc not found).
     
 }
 

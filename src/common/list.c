@@ -80,11 +80,12 @@ void queue_push(Queue* x, ListNode* item) {
     init_list_node(item);
     if (x->sz == 0) {
         x->begin = x->end = item;
-        x->sz = 1;
+
     } else {
         _merge_list(x->end, item);
         x->end = item;
     }
+    x->sz++;
 }
 void queue_pop(Queue* x) {
     if (x->sz == 0)

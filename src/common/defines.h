@@ -1,15 +1,18 @@
 #pragma once
 
+#ifndef __cplusplus
 #define true 1
 #define false 0
+#define auto __auto_type
+typedef char bool;
+#endif
+
 #define TRUE true
 #define FALSE false
 #ifndef NULL
 #define NULL 0
 #endif
-#define auto __auto_type
 
-typedef char bool;
 typedef signed char i8;
 typedef unsigned char u8;
 typedef signed short i16;
@@ -23,34 +26,34 @@ typedef i64 isize;
 typedef u64 usize;
 
 /* Efficient min and max operations */
-#define MIN(_a, _b)                                                                                \
-    ({                                                                                             \
-        typeof(_a) __a = (_a);                                                                     \
-        typeof(_b) __b = (_b);                                                                     \
-        __a <= __b ? __a : __b;                                                                    \
+#define MIN(_a, _b) \
+    ({ \
+        typeof(_a) __a = (_a); \
+        typeof(_b) __b = (_b); \
+        __a <= __b ? __a : __b; \
     })
 
-#define MAX(_a, _b)                                                                                \
-    ({                                                                                             \
-        typeof(_a) __a = (_a);                                                                     \
-        typeof(_b) __b = (_b);                                                                     \
-        __a >= __b ? __a : __b;                                                                    \
+#define MAX(_a, _b) \
+    ({ \
+        typeof(_a) __a = (_a); \
+        typeof(_b) __b = (_b); \
+        __a >= __b ? __a : __b; \
     })
 
 #define BIT(i) (1ull << (i))
 
-#define NO_BSS        __attribute__((section(".data")))
-#define NO_RETURN      __attribute__((noreturn))
-#define INLINE        inline __attribute__((unused))
+#define NO_BSS __attribute__((section(".data")))
+#define NO_RETURN __attribute__((noreturn))
+#define INLINE inline __attribute__((unused))
 #define ALWAYS_INLINE inline __attribute__((unused, always_inline))
-#define NO_INLINE     __attribute__((noinline))
-#define NO_IPA        __attribute__((noipa))
+#define NO_INLINE __attribute__((noinline))
+#define NO_IPA __attribute__((noipa))
 
 // NOTE: no_return will disable traps.
 // NO_RETURN NO_INLINE void no_return();
 
 // `offset_of` returns the offset of `member` inside struct `type`.
-#define offset_of(type, member) ((usize)(&((type *)NULL)->member))
+#define offset_of(type, member) ((usize)(&((type*)NULL)->member))
 
 // assume `mptr` is a pointer to `member` inside struct `type`, this
 // macro returns the pointer to the "container" struct `type`.
@@ -65,10 +68,10 @@ typedef u64 usize;
 // > ListNode b = &a.node;
 //
 // then `container_of(b, Container, node)` will be the same as `&a`.
-#define container_of(mptr, type, member)                                                           \
-    ({                                                                                             \
-        const typeof(((type *)NULL)->member) *_mptr = (mptr);                                      \
-        (type *)((u8 *)_mptr - offset_of(type, member));                                           \
+#define container_of(mptr, type, member) \
+    ({ \
+        const typeof(((type*)NULL)->member)* _mptr = (mptr); \
+        (type*)((u8*)_mptr - offset_of(type, member)); \
     })
 
 // return the largest c that c is a multiple of b and c <= a.
@@ -84,4 +87,8 @@ static INLINE u64 round_up(u64 a, u64 b) {
 // panic
 NO_INLINE NO_RETURN void _panic(const char*, int);
 #define PANIC() _panic(__FILE__, __LINE__)
-#define ASSERT(expr) ({ if (!(expr)) PANIC(); })
+#define ASSERT(expr) \
+    ({ \
+        if (!(expr)) \
+            PANIC(); \
+    })

@@ -3,7 +3,7 @@
 #include <kernel/init.h>
 #include <kernel/sched.h>
 #include <test/test.h>
-#include <driver/sd.h>
+// #include <driver/sd.h>
 
 bool panic_flag;
 
@@ -22,8 +22,12 @@ NO_RETURN void idle_entry() {
 }
 
 NO_RETURN void kernel_entry() {
-    printk("Hello world\n");
-    proc_test();
+    printk("hello world %d\n", (int)sizeof(struct proc));
+
+    // proc_test();
+    vm_test();
+    user_proc_test();
+    
     do_rest_init();
 
     while (1)
