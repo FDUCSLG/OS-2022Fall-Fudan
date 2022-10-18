@@ -59,7 +59,7 @@ void set_cpu_timer(struct timer* timer)
 {
     timer->triggered = false;
     timer->_key = get_timestamp_ms() + timer->elapse;
-    _rb_insert(&timer->_node, &cpus[cpuid()].timer, __timer_cmp);
+    ASSERT(0 == _rb_insert(&timer->_node, &cpus[cpuid()].timer, __timer_cmp));
     __timer_set_clock();
 }
 
