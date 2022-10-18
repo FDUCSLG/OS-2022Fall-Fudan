@@ -10,7 +10,12 @@ struct cpu cpus[NCPU];
 
 static bool __timer_cmp(rb_node lnode, rb_node rnode)
 {
-    return container_of(lnode, struct timer, _node)->_key < container_of(rnode, struct timer, _node)->_key;
+    i64 d = container_of(lnode, struct timer, _node)->_key - container_of(rnode, struct timer, _node)->_key;
+    if (d < 0)
+        return true;
+    if (d == 0)
+        return lnode < rnode;
+    return false;
 }
 
 static void __timer_set_clock()
