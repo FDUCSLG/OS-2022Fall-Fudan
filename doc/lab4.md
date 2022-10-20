@@ -6,6 +6,8 @@
 
 * 更新了信号量的规则，引入了信号量的锁定和解锁机制，便于借助信号量实现更丰富的同步功能。详见API Reference。不影响原有代码。
 
+* **信号量的post操作缩写为V，wait操作缩写为P，是我给当成首字母了，API Reference已经更新，很抱歉误导了大家。**
+
 * 在通过lab3的测试后，**请将`activate_proc`中若`thisproc()->state==ZOMBIE`则panic的规则去除**。如果`thisproc()->state==ZOMBIE`，请不做任何操作，并返回false。这项改动有助于你编写`kill`函数。
 
 * 添加了一套内核IPC机制。详见API Reference。

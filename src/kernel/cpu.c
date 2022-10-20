@@ -10,7 +10,12 @@ struct cpu cpus[NCPU];
 
 static bool __timer_cmp(rb_node lnode, rb_node rnode)
 {
-    return container_of(lnode, struct timer, _node)->_key < container_of(rnode, struct timer, _node)->_key;
+    i64 d = container_of(lnode, struct timer, _node)->_key - container_of(rnode, struct timer, _node)->_key;
+    if (d < 0)
+        return true;
+    if (d == 0)
+        return lnode < rnode;
+    return false;
 }
 
 static void __timer_set_clock()
@@ -54,7 +59,7 @@ void set_cpu_timer(struct timer* timer)
 {
     timer->triggered = false;
     timer->_key = get_timestamp_ms() + timer->elapse;
-    _rb_insert(&timer->_node, &cpus[cpuid()].timer, __timer_cmp);
+    ASSERT(0 == _rb_insert(&timer->_node, &cpus[cpuid()].timer, __timer_cmp));
     __timer_set_clock();
 }
 
