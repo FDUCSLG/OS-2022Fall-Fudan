@@ -2,8 +2,8 @@
 
 #include <common/defines.h>
 #include <common/list.h>
-#include <common/string.h>
 #include <common/sem.h>
+#include <common/string.h>
 
 #define BSIZE 512
 
@@ -18,7 +18,5 @@ typedef struct buf {
     /*
      * Add other necessary elements. It depends on you.
      */
-    /* TODO: Lab7 driver. */
-    ListNode node;
-    Semaphore sl;
+    /* TODO: Lab5 driver. */
 } buf;
