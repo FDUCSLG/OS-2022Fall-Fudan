@@ -26,8 +26,8 @@ file(GLOB fs_sources CONFIGURE_DEPENDS "../*.c")
 add_library(fs STATIC ${fs_sources} "instrument.c")
 target_compile_options(fs PUBLIC "-fno-builtin" "-ffreestanding")
 
-add_executable(inode_test inode_test.cpp)
-target_link_libraries(inode_test fs mock pthread)
+# add_executable(inode_test inode_test.cpp)
+# target_link_libraries(inode_test fs mock pthread)
 
 add_executable(cache_test cache_test.cpp)
 target_link_libraries(cache_test fs mock pthread)
