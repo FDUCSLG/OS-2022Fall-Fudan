@@ -86,7 +86,7 @@ int _query_sem(Semaphore* x)
 void _post_sem(Semaphore* x) {
     sb(x)++;
 }
-bool _wait_sem(Semaphore* x) {
+bool _wait_sem(Semaphore* x, bool alertable [[maybe_unused]]) {
     auto t = sa(x)++;
     int t0 = time(NULL);
     while (1)

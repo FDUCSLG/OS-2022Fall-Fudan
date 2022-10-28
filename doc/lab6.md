@@ -16,8 +16,11 @@
 * 为wait_sem等一系列函数添加了编译检查，未处理返回值将编译失败。
   
   > API Reference中要求，**在wait_sem返回false后，应尽快返回用户态以处理signal（killed），严禁再次wait。** （为什么？）在lab3、4、5中，我们均未对是否正确处理wait被打断的情况作出要求，**从lab6开始，这一点将被纳入打分标准**。
+
 * 添加了一套以unalertable_wait_sem为代表的函数，unalertable wait不会被signal（kill）打断，也没有返回值，**但请严格限制使用，保证unalertable wait能够在可预见的短时间内被唤醒，确保kill操作的时效性。** 关于unalertable wait的更多说明，请参考API Reference。
+
 * 为实现unalertable wait，参考linux的uninterruptable wait，我们为procstate添加了一项deepsleeping，deepsleeping与sleeping基本相同，区别仅在于alert操作对deepsleeping无效。**你需要在调度器相关代码中将deepsleeping纳入考虑。** 除activate操作外，一般可以将deepsleeping视为sleeping处理。
+
 * 将原先的activate_proc重命名为_activate_proc，添加了参数onalert，以指出是正常唤醒还是被动打断，并用宏定义activate_proc为onalert=false的_activate_proc，alert_proc为onalert=true的_activate_proc。**你需要修改_activate_proc的代码，并在kill中换用alert_proc唤醒进程。**
 
 ## 测试
