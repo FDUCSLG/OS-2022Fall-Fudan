@@ -95,7 +95,8 @@ void set_cpu_on() {
 }
 
 void set_cpu_off() {
-    _arch_disable_trap();
+    auto t = _arch_disable_trap();
+    (void)t;
     cpus[cpuid()].online = false;
     printk("CPU %d: stopped\n", cpuid());
 }
