@@ -2,7 +2,7 @@
 
 #include <common/defines.h>
 
-static ALWAYS_INLINE int cpuid() {
+static WARN_RESULT ALWAYS_INLINE int cpuid() {
     u64 id;
     asm volatile("mrs %[x], mpidr_el1" : [x] "=r"(id));
     return id & 0xff;
@@ -13,13 +13,13 @@ static ALWAYS_INLINE void compiler_fence() {
     asm volatile("" ::: "memory");
 }
 
-static ALWAYS_INLINE u64 get_clock_frequency() {
+static WARN_RESULT ALWAYS_INLINE u64 get_clock_frequency() {
     u64 result;
     asm volatile("mrs %[freq], cntfrq_el0" : [freq] "=r"(result));
     return result;
 }
 
-static ALWAYS_INLINE u64 get_timestamp() {
+static WARN_RESULT ALWAYS_INLINE u64 get_timestamp() {
     u64 result;
     compiler_fence();
     asm volatile("mrs %[cnt], cntpct_el0" : [cnt] "=r"(result));
@@ -58,7 +58,7 @@ static ALWAYS_INLINE void device_put_u32(u64 addr, u32 value) {
     compiler_fence();
 }
 
-static ALWAYS_INLINE u32 device_get_u32(u64 addr) {
+static WARN_RESULT ALWAYS_INLINE u32 device_get_u32(u64 addr) {
     compiler_fence();
     u32 value = *(volatile u32*)addr;
     compiler_fence();
@@ -66,7 +66,7 @@ static ALWAYS_INLINE u32 device_get_u32(u64 addr) {
 }
 
 // read Exception Syndrome Register (EL1).
-static ALWAYS_INLINE u64 arch_get_esr() {
+static WARN_RESULT ALWAYS_INLINE u64 arch_get_esr() {
     u64 result;
     arch_fence();
     asm volatile("mrs %[x], esr_el1" : [x] "=r"(result));
@@ -82,7 +82,7 @@ static ALWAYS_INLINE void arch_reset_esr() {
 }
 
 // read Exception Link Register (EL1).
-static ALWAYS_INLINE u64 arch_get_elr() {
+static WARN_RESULT ALWAYS_INLINE u64 arch_get_elr() {
     u64 result;
     arch_fence();
     asm volatile("mrs %[x], elr_el1" : [x] "=r"(result));
@@ -111,7 +111,7 @@ static ALWAYS_INLINE void arch_set_ttbr0(u64 addr) {
     arch_tlbi_vmalle1is();
 }
 // get
-static inline u64 arch_get_ttbr0() {
+static inline WARN_RESULT u64 arch_get_ttbr0() {
     u64 result;
     arch_fence();
     asm volatile("mrs %[x], ttbr0_el1" : [x] "=r"(result));
@@ -127,7 +127,7 @@ static ALWAYS_INLINE void arch_set_ttbr1(u64 addr) {
 }
 
 // read Fault Address Register
-static inline u64 arch_get_far() {
+static inline WARN_RESULT u64 arch_get_far() {
     u64 result;
     arch_fence();
     asm volatile("mrs %[x], far_el1" : [x] "=r"(result));
@@ -137,7 +137,7 @@ static inline u64 arch_get_far() {
 
 // read & set tid (may be used as a pointer?)
 // No need to add fence since added in arch_set_tid
-static inline u64 arch_get_tid() {
+static inline WARN_RESULT u64 arch_get_tid() {
     u64 tid;
     // arch_fence();
     asm volatile("mrs %[x], tpidr_el1" : [x] "=r"(tid));
@@ -151,7 +151,7 @@ static inline void arch_set_tid(u64 tid) {
 }
 
 // read & set user stack pointer
-static inline u64 arch_get_usp() {
+static inline WARN_RESULT u64 arch_get_usp() {
     u64 usp;
     arch_fence();
     asm volatile("mrs %[x], sp_el0" : [x] "=r"(usp));
@@ -165,7 +165,7 @@ static inline void arch_set_usp(u64 usp) {
 }
 
 // tpidr_el0 (belongs to context)
-static inline u64 arch_get_tid0() {
+static inline WARN_RESULT u64 arch_get_tid0() {
     u64 tid;
     // arch_fence();
     asm volatile("mrs %[x], tpidr_el0" : [x] "=r"(tid));
@@ -198,7 +198,7 @@ static ALWAYS_INLINE void arch_yield() {
     asm volatile("yield" ::: "memory");
 }
 
-static inline bool _arch_enable_trap() {
+static inline WARN_RESULT bool _arch_enable_trap() {
     u64 t;
     asm volatile("mrs %[x], daif" : [x] "=r"(t));
     if (t == 0)
@@ -207,7 +207,7 @@ static inline bool _arch_enable_trap() {
     return false;
 }
 
-static inline bool _arch_disable_trap() {
+static inline WARN_RESULT bool _arch_disable_trap() {
     u64 t;
     asm volatile("mrs %[x], daif" : [x] "=r"(t));
     if (t != 0)
@@ -217,7 +217,7 @@ static inline bool _arch_disable_trap() {
 }
 
 #define arch_with_trap \
-    for (int __t_i = (_arch_enable_trap(), 0); __t_i < 1; __t_i++, _arch_disable_trap())
+    for (int __t_e = _arch_enable_trap(), __t_i = 0; __t_i < 1; __t_i++, __t_e || _arch_disable_trap())
 
 static ALWAYS_INLINE NO_RETURN void arch_stop_cpu() {
     while (1)

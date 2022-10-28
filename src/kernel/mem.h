@@ -3,8 +3,8 @@
 #include <common/defines.h>
 #include <aarch64/mmu.h>
 
-void* kalloc_page();
+WARN_RESULT void* kalloc_page();
 void kfree_page(void*);
 
-void* kalloc(isize);
+WARN_RESULT void* kalloc(isize);
 void kfree(void*);

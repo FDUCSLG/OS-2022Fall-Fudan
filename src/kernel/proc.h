@@ -6,7 +6,7 @@
 #include <kernel/schinfo.h>
 #include <kernel/pt.h>
 
-enum procstate { UNUSED, RUNNABLE, RUNNING, SLEEPING, ZOMBIE };
+enum procstate { UNUSED, RUNNABLE, RUNNING, SLEEPING, DEEPSLEEPING, ZOMBIE };
 
 typedef struct UserContext
 {
@@ -39,8 +39,8 @@ struct proc
 };
 
 // void init_proc(struct proc*);
-struct proc* create_proc();
+WARN_RESULT struct proc* create_proc();
 int start_proc(struct proc*, void(*entry)(u64), u64 arg);
 NO_RETURN void exit(int code);
-int wait(int* exitcode);
-int kill(int pid);
+WARN_RESULT int wait(int* exitcode);
+WARN_RESULT int kill(int pid);

@@ -4,7 +4,7 @@
 
 void *memset(void *s, int c, usize n);
 void *memcpy(void *restrict dest, const void *restrict src, usize n);
-int memcmp(const void *s1, const void *s2, usize n);
+WARN_RESULT int memcmp(const void *s1, const void *s2, usize n);
 
 // NOTE: memmove does not allocate extra memory and handles
 // overlapped memory regions correctly, but it does not take side
@@ -19,6 +19,6 @@ void *memmove(void *dest, const void *src, usize n);
 char *strncpy(char *restrict dest, const char *restrict src, usize n);
 char *strncpy_fast(char *restrict dest, const char *restrict src, usize n);
 
-int strncmp(const char *s1, const char *s2, usize n);
+WARN_RESULT int strncmp(const char *s1, const char *s2, usize n);
 
-usize strlen(const char *s);
+WARN_RESULT usize strlen(const char *s);

@@ -8,7 +8,7 @@ typedef struct {
     volatile bool locked;
 } SpinLock;
 
-bool _try_acquire_spinlock(SpinLock*);
+WARN_RESULT bool _try_acquire_spinlock(SpinLock*);
 void _acquire_spinlock(SpinLock*);
 void _release_spinlock(SpinLock*);
 
