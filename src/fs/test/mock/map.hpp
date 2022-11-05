@@ -31,13 +31,7 @@ public:
         std::shared_lock lock(mutex);
         auto it = map.find(key);
         if (it == map.end()) {
-            printf("\n%d\n", key);
-            printf("\n%p\n", __builtin_return_address(0));
-            printf("\n%p\n", __builtin_return_address(1));
-            printf("\n%p\n", __builtin_return_address(2));
-            printf("\n%p\n", __builtin_return_address(3));
-            printf("\n%p\n", __builtin_return_address(4));
-            printf("\n%p\n", __builtin_return_address(5));
+            backtrace();
             throw Internal("key not found");
         }
         return it->second;

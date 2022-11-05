@@ -36,19 +36,39 @@ struct Signal {
 Map<void*, Mutex> mtx_map;
 Map<void*, Signal> sig_map;
 
-}  // namespace
+thread_local int holding = 0;
+static struct Blocker {
+    sem_t sem;
+    Blocker() {
+        sem_init(&sem, 0, 3);
+    }
+    void p() {
+        if constexpr (MockLockConfig::SpinLockBlocksCPU)
+            sem_wait(&sem);
+    }
+    void v() {
+        if constexpr (MockLockConfig::SpinLockBlocksCPU)
+            sem_post(&sem);
+    }
+} blocker;
+}
 
 extern "C" {
+
 void init_spinlock(struct SpinLock* lock, const char* name [[maybe_unused]]) {
     mtx_map.try_add(lock);
 }
 
 void _acquire_spinlock(struct SpinLock* lock) {
+    blocker.p();
     mtx_map[lock].lock();
+    holding++;
+    blocker.v();
 }
 
 void _release_spinlock(struct SpinLock* lock) {
     mtx_map[lock].unlock();
+    holding--;
 }
 
 bool holding_spinlock(struct SpinLock* lock) {
@@ -87,11 +107,13 @@ void _post_sem(Semaphore* x) {
     sb(x)++;
 }
 bool _wait_sem(Semaphore* x, bool alertable [[maybe_unused]]) {
+    if constexpr (MockLockConfig::SpinLockForbidsWait)
+        assert(holding == 1);
     auto t = sa(x)++;
     int t0 = time(NULL);
     while (1)
     {
-        if (time(NULL) - t0 > 3)
+        if (time(NULL) - t0 > MockLockConfig::WaitTimeoutSeconds)
         {
             return false;
         }
