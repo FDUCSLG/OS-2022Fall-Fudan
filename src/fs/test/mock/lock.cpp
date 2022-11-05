@@ -112,8 +112,6 @@ void _post_sem(Semaphore* x) {
     sb(x)++;
 }
 bool _wait_sem(Semaphore* x, bool alertable [[maybe_unused]]) {
-    if constexpr (MockLockConfig::SpinLockForbidsWait)
-        assert(holding == 1);
     auto t = sa(x)++;
     int t0 = time(NULL);
     while (1)
@@ -125,11 +123,15 @@ bool _wait_sem(Semaphore* x, bool alertable [[maybe_unused]]) {
         if (sb(x) > t)
             break;
         _unlock_sem(x);
-        if (holding)
+        if (holding) {
+            if constexpr (MockLockConfig::SpinLockForbidsWait)
+                assert(0);
             blocker.v();
+        }
         usleep(5);
-        if (holding)
+        if (holding) {
             blocker.p();
+        }
         _lock_sem(x);
     }
     _unlock_sem(x);
