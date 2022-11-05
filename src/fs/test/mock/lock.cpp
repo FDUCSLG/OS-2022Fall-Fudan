@@ -4,6 +4,7 @@
 
 #include <condition_variable>
 #include <semaphore.h>
+#include <time.h>
 #include <cassert>
 #include <map>
 #include <unistd.h>
@@ -43,8 +44,12 @@ static struct Blocker {
         sem_init(&sem, 0, 3);
     }
     void p() {
-        if constexpr (MockLockConfig::SpinLockBlocksCPU)
-            sem_wait(&sem);
+        if constexpr (MockLockConfig::SpinLockBlocksCPU) {
+            struct timespec ts;
+            assert(clock_gettime(CLOCK_REALTIME, &ts) == 0);
+            ts.tv_sec += MockLockConfig::WaitTimeoutSeconds;
+            assert(sem_timedwait(&sem, &ts) == 0);
+        }
     }
     void v() {
         if constexpr (MockLockConfig::SpinLockBlocksCPU)
