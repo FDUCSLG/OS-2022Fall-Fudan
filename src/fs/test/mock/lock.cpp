@@ -35,13 +35,13 @@ struct Signal {
 };
 
 Map<void*, Mutex> mtx_map;
-Map<void*, Signal> sig_map;
 
 thread_local int holding = 0;
 static struct Blocker {
     sem_t sem;
     Blocker() {
-        sem_init(&sem, 0, 3);
+        sem_init(&sem, 0, 4);
+        mtx_map.try_add(&sem);
     }
     void p() {
         if constexpr (MockLockConfig::SpinLockBlocksCPU) {
@@ -65,15 +65,15 @@ void init_spinlock(struct SpinLock* lock, const char* name [[maybe_unused]]) {
 }
 
 void _acquire_spinlock(struct SpinLock* lock) {
-    blocker.p();
+    if (holding++ == 0)
+        blocker.p();
     mtx_map[lock].lock();
-    holding++;
-    blocker.v();
 }
 
 void _release_spinlock(struct SpinLock* lock) {
     mtx_map[lock].unlock();
-    holding--;
+    if (--holding == 0)
+        blocker.v();
 }
 
 bool holding_spinlock(struct SpinLock* lock) {
@@ -125,7 +125,11 @@ bool _wait_sem(Semaphore* x, bool alertable [[maybe_unused]]) {
         if (sb(x) > t)
             break;
         _unlock_sem(x);
-        usleep(10);
+        if (holding)
+            blocker.v();
+        usleep(5);
+        if (holding)
+            blocker.p();
         _lock_sem(x);
     }
     _unlock_sem(x);
