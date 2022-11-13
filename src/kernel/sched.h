@@ -4,7 +4,8 @@
 
 #define RR_TIME 1000
 
-void init_schinfo(struct schinfo*);
+void init_schinfo(struct schinfo*, bool group);
+void init_schqueue(struct schqueue*);
 
 bool _activate_proc(struct proc*, bool onalert);
 #define activate_proc(proc) _activate_proc(proc, false)

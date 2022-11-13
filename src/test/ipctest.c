@@ -43,8 +43,8 @@ void ipc_test() {
         start_proc(p, receiver, i * 1000);
     }
     while (1) {
-        int code;
-        int id = wait(&code);
+        int code, t;
+        int id = wait(&code, &t);
         if (id == -1)
             break;
     }
