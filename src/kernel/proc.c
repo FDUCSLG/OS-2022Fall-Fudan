@@ -81,23 +81,3 @@ define_init(root_proc)
     root_proc.parent = &root_proc;
     start_proc(&root_proc, kernel_entry, 123456);
 }
-
-
-void yield() {
-    // TODO: lab7 container
-    // Give up cpu resources and switch to the scheduler
-    // 1. get sched lock
-    // 2. set process state and call scheduler
-    // 3. don't forget to release your lock
-
-}
-
-void sleep(void* chan, SpinLock* lock) {
-    // TODO: lab7 container
-    // release lock and sleep on channel, reacquire lock when awakened
-}
-
-void wakeup(void* chan) {
-    // TODO lab7 container
-    // wake up all sleeping processses on channel
-}
