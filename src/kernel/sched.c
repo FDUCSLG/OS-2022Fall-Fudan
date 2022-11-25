@@ -17,7 +17,7 @@ struct proc* thisproc()
 
 }
 
-void init_schinfo(struct schinfo* p)
+void init_schinfo(struct schinfo* p, bool group)
 {
     // TODO: initialize your customized schinfo for every newly-created process
 
@@ -53,11 +53,18 @@ bool is_unused(struct proc* p)
     return r;
 }
 
-bool activate_proc(struct proc* p)
+bool _activate_proc(struct proc* p, bool onalert)
 {
     // TODO
-    // if the proc->state is RUNNING/RUNNABLE, do nothing
-    // if the proc->state if SLEEPING/UNUSED, set the process state to RUNNABLE and add it to the sched queue
+    // if the proc->state is RUNNING/RUNNABLE, do nothing and return false
+    // if the proc->state is SLEEPING/UNUSED, set the process state to RUNNABLE, add it to the sched queue, and return true
+    // if the proc->state is DEEPSLEEING, do nothing if onalert or activate it if else, and return the corresponding value.
+
+}
+
+void activate_group(struct container* group)
+{
+    // TODO: add the schinfo node of the group to the schqueue of its parent
 
 }
 

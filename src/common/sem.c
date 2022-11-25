@@ -60,7 +60,7 @@ void _unlock_sem(Semaphore* sem)
     _release_spinlock(&sem->lock);
 }
 
-bool _wait_sem(Semaphore* sem)
+bool _wait_sem(Semaphore* sem, bool alertable)
 {
     setup_checker(0);
     checker_begin_ctx(0);
@@ -75,7 +75,7 @@ bool _wait_sem(Semaphore* sem)
     _insert_into_list(&sem->sleeplist, &wait->slnode);
     lock_for_sched(0);
     release_spinlock(0, &sem->lock);
-    sched(0, SLEEPING);
+    sched(0, alertable ? SLEEPING : DEEPSLEEPING);
     acquire_spinlock(0, &sem->lock); // also the lock for waitdata
     if (!wait->up) // wakeup by other sources
     {

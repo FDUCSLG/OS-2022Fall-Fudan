@@ -5,6 +5,16 @@
 #include <exception>
 #include <string>
 
+#include <cstdio>
+
+static inline void backtrace() {
+    printf("0\n%p\n", __builtin_return_address(0));
+    printf("1\n%p\n", __builtin_return_address(1));
+    printf("2\n%p\n", __builtin_return_address(2));
+    printf("3\n%p\n", __builtin_return_address(3));
+    printf("4\n%p\n", __builtin_return_address(4));
+}
+
 struct Exception : public std::exception {
     std::string message;
 

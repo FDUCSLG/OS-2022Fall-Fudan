@@ -194,7 +194,9 @@ static void ss_wakeup(ListNode* head) {
         activate_proc(container_of(node, msg_sender, node)->proc);
     }
 }
-static void store_msg(void* dst, msg_msg* msg, int msgsz) {
+static void store_msg(msgbuf* dstg, msg_msg* msg, int msgsz) {
+    void* dst = dstg->data;
+    dstg->mtype = msg->mtype;
     memcpy(dst, (void*)msg->data, MIN(msgsz, MSG_MSGSZ));
     msgsz -= MIN(MSG_MSGSZ, msgsz);
     dst += MIN(MSG_MSGSZ, msgsz);
@@ -256,7 +258,7 @@ int sys_msgrcv(int msgid, msgbuf* msgp, int msgsz, int mtype, int msgflg) {
             return E2BIG;
     }
     msgsz = MIN(msgsz, found_msg->size);
-    store_msg(msgp->data, found_msg, msgsz);
+    store_msg(msgp, found_msg, msgsz);
     free_msg(found_msg);
     return msgsz;
 out_lock:

@@ -4,6 +4,7 @@
 
 #include <condition_variable>
 #include <semaphore.h>
+#include <time.h>
 #include <cassert>
 #include <map>
 #include <unistd.h>
@@ -34,21 +35,45 @@ struct Signal {
 };
 
 Map<void*, Mutex> mtx_map;
-Map<void*, Signal> sig_map;
 
-}  // namespace
+thread_local int holding = 0;
+static struct Blocker {
+    sem_t sem;
+    Blocker() {
+        sem_init(&sem, 0, 4);
+        mtx_map.try_add(&sem);
+    }
+    void p() {
+        if constexpr (MockLockConfig::SpinLockBlocksCPU) {
+            struct timespec ts;
+            assert(clock_gettime(CLOCK_REALTIME, &ts) == 0);
+            ts.tv_sec += MockLockConfig::WaitTimeoutSeconds;
+            assert(sem_timedwait(&sem, &ts) == 0);
+        }
+    }
+    void v() {
+        if constexpr (MockLockConfig::SpinLockBlocksCPU)
+            sem_post(&sem);
+    }
+} blocker;
+}
 
 extern "C" {
+
 void init_spinlock(struct SpinLock* lock, const char* name [[maybe_unused]]) {
     mtx_map.try_add(lock);
 }
 
 void _acquire_spinlock(struct SpinLock* lock) {
+    if (holding++ == 0)
+        blocker.p();
     mtx_map[lock].lock();
 }
 
 void _release_spinlock(struct SpinLock* lock) {
     mtx_map[lock].unlock();
+    if (--holding == 0)
+        blocker.v();
 }
 
 bool holding_spinlock(struct SpinLock* lock) {
@@ -86,19 +111,27 @@ int _query_sem(Semaphore* x)
 void _post_sem(Semaphore* x) {
     sb(x)++;
 }
-bool _wait_sem(Semaphore* x) {
+bool _wait_sem(Semaphore* x, bool alertable [[maybe_unused]]) {
     auto t = sa(x)++;
     int t0 = time(NULL);
     while (1)
     {
-        if (time(NULL) - t0 > 3)
+        if (time(NULL) - t0 > MockLockConfig::WaitTimeoutSeconds)
         {
             return false;
         }
         if (sb(x) > t)
             break;
         _unlock_sem(x);
-        usleep(10);
+        if (holding) {
+            if constexpr (MockLockConfig::SpinLockForbidsWait)
+                assert(0);
+            blocker.v();
+        }
+        usleep(5);
+        if (holding) {
+            blocker.p();
+        }
         _lock_sem(x);
     }
     _unlock_sem(x);

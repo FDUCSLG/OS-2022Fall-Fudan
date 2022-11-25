@@ -16,3 +16,10 @@ struct schinfo
     // TODO: customize your sched info
     
 };
+
+// embedded data for containers
+struct schqueue
+{
+    // TODO: customize your sched queue
+    
+};
