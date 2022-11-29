@@ -38,6 +38,7 @@ add_subdirectory(kernel)
 add_subdirectory(driver)
 add_subdirectory(user)
 add_subdirectory(test)
+add_subdirectory(fs)
 
 set(kernel_name kernel8)
 add_executable(${kernel_name}.elf main.c start.S)
