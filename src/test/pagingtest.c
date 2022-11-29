@@ -17,6 +17,7 @@ void pgfault_first_test(){
 	i64 limit = 10; //do not need too big
 	struct proc* p = thisproc();
 	struct pgdir* pd = &p->pgdir;
+	ASSERT(pd->pt);//make sure the attached pt is valid
 	attach_pgdir(pd);
 	struct section* st = NULL;
 	_for_in_list(node, &pd->section_head){
