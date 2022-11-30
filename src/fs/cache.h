@@ -1,9 +1,8 @@
 #pragma once
-#include <common/sem.h>
 #include <common/list.h>
+#include <common/sem.h>
 #include <fs/block_device.h>
 #include <fs/defines.h>
-#include <common/sem.h>
 
 // maximum number of distinct blocks that one atomic operation can hold.
 #define OP_MAX_NUM_BLOCKS 10
@@ -22,8 +21,8 @@ typedef struct {
     usize block_no;
     ListNode node;
     bool acquired;  // is the block already acquired by some thread?
-    bool pinned;  // if a block is pinned, it should not be evicted from the
-                  // cache.
+    bool pinned;    // if a block is pinned, it should not be evicted from the
+                    // cache.
     Semaphore sem;  // this lock protects `valid` and `data`.
     SleepLock lock;
     bool valid;  // is the content of block loaded from disk?
@@ -34,6 +33,7 @@ typedef struct {
 // see `begin_op` and `end_op`.
 typedef struct {
     usize rm;
+    usize ts;
     // hint: you may want to add something else here.
 } OpContext;
 

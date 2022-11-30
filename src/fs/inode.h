@@ -72,14 +72,13 @@ typedef struct InodeTree {
     // NOTE: caller must NOT hold the lock of `inode`.
     void (*put)(OpContext* ctx, Inode* inode);
 
-    // read exactly `count` bytes from `inode`, beginning at `offset`, to
-    // `dest`.
-    //
+    // read `count` bytes from `inode`, beginning at `offset`, to `dest`.
+    // return the size you read
     // NOTE: caller must hold the lock of `inode`.
     usize (*read)(Inode* inode, u8* dest, usize offset, usize count);
 
     // write exactly `count` bytes from `src` to `inode`, beginning at `offset`.
-    //
+    // return the size you write
     // NOTE: caller must hold the lock of `inode`.
     usize (*write)(OpContext* ctx,
                    Inode* inode,
@@ -104,7 +103,8 @@ typedef struct InodeTree {
     // add a new directory entry in `inode` with `name`, which points to another
     // inode with `inode_no`.
     // the index of new directory entry is returned.
-    // `insert` does not ensure all directory entries have unique names.
+    // `insert` does not ensure all directory entries have unique names,
+    // if have same names,return -1
     //
     // NOTE: caller must hold the lock of `inode`.
     usize (*insert)(OpContext* ctx,

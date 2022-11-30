@@ -41,7 +41,7 @@ void init_inodes(const SuperBlock* _sblock, const BlockCache* _cache) {
 
 // initialize in-memory inode.
 static void init_inode(Inode* inode) {
-    init_spinlock(&inode->lock);
+    init_sleeplock(&inode->lock);
     init_rc(&inode->rc);
     init_list_node(&inode->node);
     inode->inode_no = 0;
