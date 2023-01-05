@@ -81,3 +81,13 @@ define_init(root_proc)
     root_proc.parent = &root_proc;
     start_proc(&root_proc, kernel_entry, 123456);
 }
+
+/*
+ * Create a new process copying p as the parent.
+ * Sets up stack to return as if from system call.
+ * Caller must set state of returned proc to RUNNABLE.
+ */
+void trap_return();
+int fork() {
+    /* TODO: Your code here. */
+}

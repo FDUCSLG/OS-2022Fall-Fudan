@@ -6,6 +6,10 @@
 #include <kernel/schinfo.h>
 #include <kernel/pt.h>
 #include <kernel/container.h>
+#include <fs/inode.h>
+#include <fs/file.h>
+
+#define NOFILE 1024 /* open files per process */
 
 enum procstate { UNUSED, RUNNABLE, RUNNING, SLEEPING, DEEPSLEEPING, ZOMBIE };
 
@@ -39,6 +43,8 @@ struct proc
     void* kstack;
     UserContext* ucontext;
     KernelContext* kcontext;
+    struct oftable oftable;
+    Inode* cwd; // current working dictionary
 };
 
 // void init_proc(struct proc*);
@@ -48,3 +54,4 @@ int start_proc(struct proc*, void(*entry)(u64), u64 arg);
 NO_RETURN void exit(int code);
 WARN_RESULT int wait(int* exitcode, int* pid);
 WARN_RESULT int kill(int pid);
+WARN_RESULT int fork();

@@ -16,19 +16,20 @@ set(boot_files
     "start4.elf"
     "start4cd.elf")
 
-# set(user_files "init" 
-# "cat"
-# "sh"
-# "echo"
-# "ls"
-# "mkfs"
-# "mkdir")
+set(user_files "init" 
+"cat"
+"sh"
+"echo"
+"ls"
+"mkfs"
+"mkdir"
+"usertests")
 
 add_custom_command(
     OUTPUT sd.img
     BYPRODUCTS boot.img
-    COMMAND ./generate-image.py ${CMAKE_CURRENT_BINARY_DIR} ${boot_files} # ${user_files}
-    DEPENDS kernel generate-image.py ${boot_files} # user_bin
+    COMMAND ./generate-image.py ${CMAKE_CURRENT_BINARY_DIR} ${boot_files} ${user_files}
+    DEPENDS kernel generate-image.py ${boot_files} user_bin
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(image ALL DEPENDS sd.img)

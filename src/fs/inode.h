@@ -124,3 +124,6 @@ typedef struct InodeTree {
 extern InodeTree inodes;
 
 void init_inodes(const SuperBlock* sblock, const BlockCache* cache);
+Inode* namei(const char* path, OpContext* ctx);
+Inode* nameiparent(const char* path, char* name, OpContext* ctx);
+void stati(Inode* ip, struct stat* st);

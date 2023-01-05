@@ -32,5 +32,12 @@ void attach_pgdir(struct pgdir* pgdir)
         arch_set_ttbr0(K2P(&invalid_pt));
 }
 
-
+/*
+ * Copy len bytes from p to user address va in page table pgdir.
+ * Allocate physical pages if required.
+ * Useful when pgdir is not the current page table.
+ */
+int copyout(struct pgdir* pd, void* va, void *p, usize len){
+    // TODO
+}
 
