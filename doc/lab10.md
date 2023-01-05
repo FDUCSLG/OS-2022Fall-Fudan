@@ -139,6 +139,8 @@ sys_chdir
 
 > 本模块内的相关问题推荐联系唐思源助教。
 
+进行本部分任务前，建议先完成File Descriptor部分任务。
+
 **<u>TODO</u>**
 
 - `kernel/proc.c: fork TODO`
