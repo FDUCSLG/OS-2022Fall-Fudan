@@ -143,6 +143,9 @@ sys_chdir
 
 **<u>TODO</u>**
 
+* `kernel/syscall.c: user_readable user_writeable`
+  
+  检查syscall中由用户程序传入的指针所指向的内存空间是否有效且可被用户程序读写
 - `kernel/proc.c: fork TODO`
 
 - `kernel/exec.c: execve TODO`
