@@ -5,6 +5,7 @@
 #include <common/spinlock.h>
 #include <fs/cache.h>
 #include <fs/defines.h>
+#include <sys/stat.h>
 
 #define ROOT_INODE_NO 1
 
