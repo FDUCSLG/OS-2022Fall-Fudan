@@ -37,7 +37,7 @@ usize user_strlen(const char* str, usize maxlen) {
             if (str[i] == 0)
                 return i + 1;
         } else
-            return -1;
+            return 0;
     }
-    return -1;
+    return 0;
 }

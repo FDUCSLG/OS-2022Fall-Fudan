@@ -11,7 +11,6 @@ struct {
     usize e;  // Edit index
 } input;
 #define C(x)      ((x) - '@')  // Control-x
-#define BACKSPACE 0x100
 
 
 isize console_write(Inode *ip, char *buf, isize n) {
