@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
 
     memset(buf, 0, sizeof(buf));
     memmove(buf, &sb, sizeof(sb));
-    wsect(0, buf);
+    wsect(1, buf);
 
     rootino = ialloc(INODE_DIRECTORY);
     assert(rootino == ROOT_INODE_NO);
