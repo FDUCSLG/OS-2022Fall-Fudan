@@ -44,6 +44,12 @@ int fdalloc(struct file* f) {
     return -1;
 }
 
+define_syscall(ioctl, int fd, u64 request) {
+    ASSERT(request == 0x5413);
+    (void)fd;
+    return 0;
+}
+
 /*
  *	map addr to a file
  */

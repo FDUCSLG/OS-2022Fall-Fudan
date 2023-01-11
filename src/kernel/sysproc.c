@@ -5,7 +5,29 @@
 #include <kernel/mem.h>
 #include <kernel/paging.h>
 
+define_syscall(gettid) {
+    return thisproc()->localpid;
+}
+
+define_syscall(set_tid_address, int* tidptr) {
+    (void)tidptr;
+    return thisproc()->localpid;
+}
+
+define_syscall(sigprocmask) {
+    return 0;
+}
+
+define_syscall(rt_sigprocmask) {
+    return 0;
+}
+
 define_syscall(myyield) {
+    yield();
+    return 0;
+}
+
+define_syscall(yield) {
     yield();
     return 0;
 }
@@ -34,9 +56,27 @@ define_syscall(exit, int n) {
     exit(n);
 }
 
+define_syscall(exit_group, int n) {
+    exit(n);
+}
+
 int execve(const char* path, char* const argv[], char* const envp[]);
 define_syscall(execve, const char* p, void* argv, void* envp) {
     if (!user_strlen(p, 256))
         return -1;
     return execve(p, argv, envp);
+}
+
+define_syscall(wait4, int pid, int options, int* wstatus, void* rusage) {
+    if (pid != -1 || wstatus != 0 || options != 0 || rusage != 0) {
+        printk("sys_wait4: unimplemented. pid %d, wstatus 0x%p, options 0x%x, rusage 0x%p\n",
+               pid,
+               wstatus,
+               options,
+               rusage);
+        while (1) {}
+        return -1;
+    }
+    int code, id;
+    return wait(&code, &id);
 }
