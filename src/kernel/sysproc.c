@@ -56,6 +56,10 @@ define_syscall(exit, int n) {
     exit(n);
 }
 
+define_syscall(exit_group, int n) {
+    exit(n);
+}
+
 int execve(const char* path, char* const argv[], char* const envp[]);
 define_syscall(execve, const char* p, void* argv, void* envp) {
     if (!user_strlen(p, 256))
@@ -63,7 +67,7 @@ define_syscall(execve, const char* p, void* argv, void* envp) {
     return execve(p, argv, envp);
 }
 
-define_syscall(sys_wait4, int pid, int options, int* wstatus, void* rusage) {
+define_syscall(wait4, int pid, int options, int* wstatus, void* rusage) {
     if (pid != -1 || wstatus != 0 || options != 0 || rusage != 0) {
         printk("sys_wait4: unimplemented. pid %d, wstatus 0x%p, options 0x%x, rusage 0x%p\n",
                pid,
