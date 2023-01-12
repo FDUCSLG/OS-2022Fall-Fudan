@@ -157,11 +157,40 @@ define_syscall(newfstatat, int dirfd, const char* path, struct stat* st, int fla
     return 0;
 }
 
-define_syscall(unlink, const char* path) {
+// Is the directory dp empty except for "." and ".." ?
+static int isdirempty(Inode* dp) {
+    usize off;
+    DirEntry de;
+
+    for (off = 2 * sizeof(de); off < dp->entry.num_bytes; off += sizeof(de)) {
+        if (inodes.read(dp, (u8*)&de, off, sizeof(de)) != sizeof(de))
+            PANIC();
+        if (de.inode_no != 0)
+            return 0;
+    }
+    return 1;
+}
+
+// Is the directory dp empty except for "." and ".." ?
+static int isdirempty(Inode* dp) {
+    usize off;
+    DirEntry de;
+
+    for (off = 2 * sizeof(de); off < dp->entry.num_bytes; off += sizeof(de)) {
+        if (inodes.read(dp, (u8*)&de, off, sizeof(de)) != sizeof(de))
+            PANIC();
+        if (de.inode_no != 0)
+            return 0;
+    }
+    return 1;
+}
+
+define_syscall(unlinkat, int fd, const char* path, int flag) {
+    ASSERT(fd == AT_FDCWD && flag == 0);
     Inode *ip, *dp;
     DirEntry de;
     char name[FILE_NAME_MAX_LENGTH];
-    u32 off;
+    usize off;
     if (!user_strlen(path, 256))
         return -1;
     OpContext ctx;
@@ -178,8 +207,10 @@ define_syscall(unlink, const char* path) {
         || strncmp(name, "..", FILE_NAME_MAX_LENGTH) == 0)
         goto bad;
 
-    if ((ip = inodes.lookup(dp, name, &off)) == 0)
+    usize inumber = inodes.lookup(dp, name, &off);
+    if (inumber == 0)
         goto bad;
+    ip = inodes.get(inumber);
     inodes.lock(ip);
 
     if (ip->entry.num_links < 1)
@@ -191,7 +222,7 @@ define_syscall(unlink, const char* path) {
     }
 
     memset(&de, 0, sizeof(de));
-    if (inodes.write(dp, 0, (u64)&de, off, sizeof(de)) != sizeof(de))
+    if (inodes.write(&ctx, dp, (u8*)&de, off, sizeof(de)) != sizeof(de))
         PANIC();
     if (ip->entry.type == INODE_DIRECTORY) {
         dp->entry.num_links--;
