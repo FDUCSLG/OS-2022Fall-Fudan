@@ -5,6 +5,8 @@
 .global ispin
 .global eicode
 
+.align 12
+
 icode:
     mov     x8, #SYS_execve
     adr     x0, init
@@ -25,6 +27,6 @@ exit:
 init:
     .string "/init\0"
 
-.align 4
+.align 12
 eicode:
 
