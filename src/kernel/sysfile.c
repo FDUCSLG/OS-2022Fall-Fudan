@@ -69,7 +69,7 @@ define_syscall(dup, int fd) {
     struct file* f = fd2file(fd);
     if (!f)
         return -1;
-    int fd = fdalloc(f);
+    fd = fdalloc(f);
     if (fd < 0)
         return -1;
     filedup(f);
